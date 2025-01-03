@@ -1,5 +1,37 @@
-import 'package:wildvoice/wildvoice.dart' as wildvoice;
+// Copyright 2024. Please see the AUTHORS file for details.
+// All rights reserved. Use of this source code is governed
+// by a BSD-style license that can be found in the LICENSE file.
 
-void main(List<String> arguments) {
-  print('Hello world: ${wildvoice.calculate()}!');
+import 'dart:io';
+
+import 'package:wildvoice/config.dart';
+import 'package:wildvoice/queues.dart';
+
+Future<void> main(List<String> arguments) async {
+  final config = Config.fromYamlPath('config.yaml');
+  final queues = Queues.fromCsvPath(config.repository);
+  for (final queue in queues) {
+    final arguments = <String>[
+      '-f',
+      'bestaudio[ext=m4a]',
+      '-o',
+      '${queue.id}.%(ext)s',
+      queue.uri,
+    ];
+
+    print('---------- ${queue.id}');
+    final process = await Process.start(config.youtubeDl, arguments);
+    const encoding = SystemEncoding();
+
+    process.stdout
+      .transform(encoding.decoder)
+      .listen((data) => stdout.write(data));
+
+    process.stderr
+      .transform(encoding.decoder)
+      .listen((data) => stderr.write(data));
+
+    final exitCode = await process.exitCode;
+    print('Process exited with code: $exitCode');
+  }
 }
