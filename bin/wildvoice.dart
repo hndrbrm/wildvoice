@@ -12,14 +12,23 @@ Future<void> main(List<String> arguments) async {
   final queues = Queues.fromCsvPath(config.repository);
   for (final queue in queues) {
     final arguments = <String>[
-      '-f',
-      'bestaudio[ext=m4a]',
+      if (queue.uri.toString().toLowerCase().contains('youtube.com')) ...[
+        '-f',
+        'bestaudio[ext=m4a]',
+      ] else ...[
+        '--extract-audio',
+        '--audio-format',
+        'mp3',
+        '--audio-quality',
+        '0',
+      ],
       '-o',
       '${queue.id}.%(ext)s',
-      queue.uri,
+      '${queue.uri}',
     ];
 
     print('---------- ${queue.id}');
+    print('${config.youtubeDl} ${arguments.join(' ')}');
     final process = await Process.start(config.youtubeDl, arguments);
     const encoding = SystemEncoding();
 

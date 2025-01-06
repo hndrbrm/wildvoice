@@ -5,13 +5,13 @@
 final class Queue {
   Queue.fromList(List<dynamic> list)
   : id = list[0] as int,
-    uri = list[1] as String;
+    uri = Uri.parse(list[1] as String);
 
   final int id;
-  final String uri;
+  final Uri uri;
 
   Map<String, dynamic> toMap() => {
     'id': id,
-    'uri': uri,
+    'uri': '$uri',
   };
 }

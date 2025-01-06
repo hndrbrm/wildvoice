@@ -13,12 +13,13 @@ final class Queues with ListMixin<Queue> {
   : this._fromCsvFile(File(path));
   
   Queues._fromCsvFile(File file)
-  : this._fromCsvString(file.readAsStringSync());
+  : this._fromCsvLines(file.readAsLinesSync());
 
-  Queues._fromCsvString(String csv)
+  Queues._fromCsvLines(List<String> lines)
   : this._fromList(
-    const CsvToListConverter()
-      .convert(csv, eol: '\n')
+    lines
+      .map((e) => _converter.convert(e).first)
+      .toList()
       .sublist(1)
   );
 
@@ -26,6 +27,8 @@ final class Queues with ListMixin<Queue> {
   : _internal = list.map((e) => Queue.fromList(e)).toList();
 
   final List<Queue> _internal;
+  
+  static const _converter = CsvToListConverter();
 
   @override
   int get length => _internal.length;
