@@ -15,13 +15,15 @@ final class Config {
 
   Config._fromYamlMap(YamlMap map)
   : youtubeDl = map['youtube_dl'],
-    repository = map['repository'];
+    repository = (map['repository'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList();
 
   Config._fromYamlString(String string)
   : this._fromYamlMap(loadYaml(string));
 
   final String youtubeDl;
-  final String repository;
+  final List<String> repository;
 
   Map<String, Object> toMap() => {
     'youtube_dl': youtubeDl,

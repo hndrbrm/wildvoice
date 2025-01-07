@@ -1,3 +1,4 @@
 youtube_dl: '/home/bebe/CustomApp/youtube-dl/youtube_dl/__main__.py'
 
-repository: 'HMSoeharto.csv'
+repository:
+  - 'input.csv'
